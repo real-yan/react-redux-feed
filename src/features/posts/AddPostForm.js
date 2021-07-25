@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { unwrapResult } from '@reduxjs/toolkit'
 
-import { postAdded } from './postsSlice'
+import { addNewPost } from './postsSlice'
 
 const AddPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [userId, setUserId] = useState('')
+    const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
     const dispatch = useDispatch()
 
@@ -16,12 +18,23 @@ const AddPostForm = () => {
     const onContentChange = e => setContent(e.target.value)
     const onAuthorChange = e => setUserId(e.target.value)
 
-    const canSave = !!title && !!content && !!userId
+    const canSave = !!title && !!content && !!userId && addRequestStatus === 'idle'
 
-    const onSavePostHandler = () => { 
-        dispatch(postAdded(title, content, userId))
-        setTitle('')
-        setContent('')
+    const onSavePostHandler = async () => { 
+        try {
+            setAddRequestStatus('pending')
+            
+            const resultAction = await dispatch(addNewPost({ title, content, userId }))
+            unwrapResult(resultAction)
+            
+            setTitle('')
+            setContent('')
+            setUserId('')
+        } catch (error) {
+           console.error('Failed to save the post', error) 
+        } finally {
+            setAddRequestStatus('idle')
+        }
     }
 
     return (
