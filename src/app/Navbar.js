@@ -23,7 +23,8 @@ export const Navbar = () => {
             <Link to="/">Posts</Link> 
             <Link to="/users">Users</Link>
             <Link to="/notifications">
-              Notifications {numUnreadNotifications > 0 && <span className="badge">{numUnreadNotifications}</span>}
+              Notifications { numUnreadNotifications > 0 && 
+                <span className="badge">{ numUnreadNotifications }</span> }
             </Link>
           </div>
           <button className="button" onClick={fecthNewNotifications}>
